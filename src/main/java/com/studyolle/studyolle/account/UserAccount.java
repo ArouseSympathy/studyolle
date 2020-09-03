@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Getter
-public class UserAccount extends User {
+public class UserAccount extends User { // 스프링 시큐리티가 제공한 User를 확장함 (Principal)
 
     private Account account;
 
