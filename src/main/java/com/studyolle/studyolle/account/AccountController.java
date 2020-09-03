@@ -41,7 +41,7 @@ public class AccountController {
         Account account = accountService.processNewAccount(signUpForm);
         accountService.login(account);
         //TODO 회원가입 처리
-        return "redirect:/";
+        return "redirect:/"; // 새로고침을 눌러도 다시 이 페이지에 접속할때의 이벤트가 일어나지 않았으면 좋겠다. 그때 사용
     }
 
     @GetMapping("/check-email-token")
@@ -63,6 +63,24 @@ public class AccountController {
         model.addAttribute("numberOfUser", accountRepository.count());
         model.addAttribute("nickname", account.getNickname());
         return view;
+    }
+
+    @GetMapping("/check-email")
+    public String checkEmail(@CurrentUser Account account, Model model){
+        model.addAttribute("email", account.getEmail());
+        return "account/check-email";
+    }
+
+    @GetMapping("/resend-confirm-email")
+    public String resendConfirmEmail(@CurrentUser Account account, Model model){
+        if(!account.canSendConfirmEmail()){
+            model.addAttribute("error", "인증 이메일은 1시간에 한번만 전송할 수 있습니다.");
+            model.addAttribute("email", account.getEmail());
+            return "account/check-email";
+        }
+
+        accountService.sendSignUpConfirmEmail(account);
+        return "redirect:/"; // 새로고침을 눌러도 다시 이 페이지에 접속할때의 이벤트가 일어나지 않았으면 좋겠다. 그때 사용
     }
 
 }

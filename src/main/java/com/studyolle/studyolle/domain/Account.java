@@ -26,6 +26,7 @@ public class Account {
     private String password;
     private boolean emailVerified;
     private String emailCheckToken;
+    private LocalDateTime emailCheckTokenGeneratedAt;
     private LocalDateTime joinedAt;
     private String bio;
     private String url;
@@ -41,6 +42,7 @@ public class Account {
 
     public void generateEmailCheckToken() {
         this.emailCheckToken = UUID.randomUUID().toString();
+        this.emailCheckTokenGeneratedAt = LocalDateTime.now();
     }
 
     @Transactional
@@ -51,5 +53,9 @@ public class Account {
 
     public boolean isValidToken(String token) {
         return this.emailCheckToken.equals(token);
+    }
+
+    public boolean canSendConfirmEmail() {
+        return this.emailCheckTokenGeneratedAt.isBefore(LocalDateTime.now().minusHours(1));
     }
 }
