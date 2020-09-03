@@ -59,7 +59,7 @@ public class AccountService {
     public void login(Account account) {
         // DB에 암호화된 db밖에 접근할 수 없기 때문에 이런 방법으로 해야함
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                account.getNickname(),
+                new UserAccount(account),
                 account.getPassword(),
                 List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
