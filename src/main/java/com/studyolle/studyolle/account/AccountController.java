@@ -8,6 +8,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
@@ -81,6 +82,19 @@ public class AccountController {
 
         accountService.sendSignUpConfirmEmail(account);
         return "redirect:/"; // 새로고침을 눌러도 다시 이 페이지에 접속할때의 이벤트가 일어나지 않았으면 좋겠다. 그때 사용
+    }
+
+    @GetMapping("/profile/{nickname}")
+    public String viewProfile(@PathVariable String nickname, Model model, @CurrentUser Account account){
+        Account byNickname = accountRepository.findByNickname(nickname);
+        if(nickname==null){
+            throw new IllegalArgumentException(nickname + "에 해당하는 사용자가 없습니다.");
+        }
+
+        model.addAttribute(byNickname);
+        //model.addAttribute("account", byNickname); 와 같음
+        model.addAttribute("isOwner", byNickname.equals(account));
+        return "account/profile";
     }
 
 }
